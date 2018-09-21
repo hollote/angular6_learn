@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Response} from '@angular/http';
-import {DataStorageService} from '../shared/data-storage.service';
-import {AuthService} from '../auth/auth.service';
+import {DataStorageService} from '../../shared/data-storage.service';
+import {AuthService} from '../../auth/auth.service';
 import {Router} from '@angular/router';
 
 @Component({
@@ -31,6 +31,10 @@ export class HeaderComponent implements OnInit {
   onLogOut() {
     this.authService.logout();
     this.router.navigate(['/signin']);
+  }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
   }
 
 }

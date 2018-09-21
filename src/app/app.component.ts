@@ -16,6 +16,3 @@ export class AppComponent implements OnInit {
     firebase.initializeApp(this.config);
   }
 }
-
-
-// getIdToken
