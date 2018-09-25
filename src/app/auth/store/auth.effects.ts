@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {LOGOUT, SET_TOKEN, SIGNIN, SIGNUP, TRY_SIGNIN, TRY_SIGNUP, TrySignin, TrySignup} from './auth.actions';
 import {map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import * as firebase from 'firebase';
-import {fromPromise} from 'rxjs/internal-compatibility';
+import {from} from 'rxjs';
 import {Router} from '@angular/router';
 
 @Injectable()
@@ -15,10 +15,10 @@ export class AuthEffects {
       return action.payload;
     }),
     switchMap((authData: { username: string, password: string }) => {
-      return fromPromise(firebase.auth().createUserWithEmailAndPassword(authData.username, authData.password));
+      return from(firebase.auth().createUserWithEmailAndPassword(authData.username, authData.password));
     }),
     switchMap(() => {
-      return fromPromise(firebase.auth().currentUser.getIdToken());
+      return from(firebase.auth().currentUser.getIdToken());
     }),
     tap(() => this.router.navigate(['/'])),
     mergeMap((token: string) => {
@@ -41,10 +41,10 @@ export class AuthEffects {
       return action.payload;
     }),
     switchMap((authData: { username: string, password: string }) => {
-      return fromPromise(firebase.auth().signInWithEmailAndPassword(authData.username, authData.password));
+      return from(firebase.auth().signInWithEmailAndPassword(authData.username, authData.password));
     }),
     switchMap(() => {
-      return fromPromise(firebase.auth().currentUser.getIdToken());
+      return from(firebase.auth().currentUser.getIdToken());
     }),
     tap(() => this.router.navigate(['/'])),
     mergeMap((token: string) => {
