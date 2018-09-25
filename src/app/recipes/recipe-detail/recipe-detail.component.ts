@@ -2,11 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Recipe} from '../recipe.model';
 import {RecipeService} from '../recipe.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {AuthService} from '../../auth/auth.service';
 import {Store} from '@ngrx/store';
-import {Ingredient} from '../../shared/ingredient.model';
 import {AddIngredients} from '../../shopping-list/store/shopping-list.actions';
-import {AppState} from '../../shopping-list/store/shopping-list.reducers';
+import {AppState} from '../../store/app.reducer';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -20,7 +18,6 @@ export class RecipeDetailComponent implements OnInit {
   constructor(private recipeService: RecipeService,
               private route: ActivatedRoute,
               private router: Router,
-              private authService: AuthService,
               private store: Store<AppState>) {
   }
 
@@ -38,9 +35,19 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   onDeleteRecipe() {
-    if (!this.authService.isAuthenticated()) {
-      return false;
-    }
+    // TO FIX
+    // this.store.select('auth').pipe(
+    //   map((authState: State) => {
+    //     return authState.authenticated;
+    //   }),
+    //   tap((authenticated: boolean) => {
+    //     if (authenticated) {
+    //       return false;
+    //     }
+    //     this.recipeService.deleteRecipe(this.id);
+    //     this.router.navigate(['/recipes']);
+    //   })
+    // );
     this.recipeService.deleteRecipe(this.id);
     this.router.navigate(['/recipes']);
   }
