@@ -12,6 +12,8 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {reducers} from './store/app.reducer';
 import {EffectsModule} from '@ngrx/effects';
 import {AuthEffects} from './auth/store/auth.effects';
+import {StoreRouterConnectingModule} from '@ngrx/router-store';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -26,9 +28,8 @@ import {AuthEffects} from './auth/store/auth.effects';
     CoreModule,
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([AuthEffects]),
-    StoreDevtoolsModule.instrument({
-      maxAge: 10
-    })
+    StoreRouterConnectingModule,
+    !environment.production ? StoreDevtoolsModule.instrument({maxAge: 10}) : []
   ],
   providers: [],
   bootstrap: [AppComponent]

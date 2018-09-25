@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Recipe} from '../recipe.model';
-import {RecipeService} from '../recipe.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {AddIngredients} from '../../shopping-list/store/shopping-list.actions';
-import {AppState} from '../../store/app.reducer';
+import {Observable} from 'rxjs';
+import {FeatureState, State} from '../store/recipe.reducers';
+import {take} from 'rxjs/operators';
+import {DeleteRecipe} from '../store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -12,19 +13,18 @@ import {AppState} from '../../store/app.reducer';
   styleUrls: ['./recipe-detail.component.css']
 })
 export class RecipeDetailComponent implements OnInit {
-  recipe: Recipe;
+  recipeState: Observable<State>;
   id: number;
 
-  constructor(private recipeService: RecipeService,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private router: Router,
-              private store: Store<AppState>) {
+              private store: Store<FeatureState>) {
   }
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      this.recipe = this.recipeService.getRecipeById(this.id);
+      this.recipeState = this.store.select('recipes');
       // TO FIX: If id is not exits, error, need to redirect to main /recipes page
       // if (!recipe) {
       //   this.router.navigate(['/recipes']);
@@ -48,12 +48,16 @@ export class RecipeDetailComponent implements OnInit {
     //     this.router.navigate(['/recipes']);
     //   })
     // );
-    this.recipeService.deleteRecipe(this.id);
+    this.store.dispatch(new DeleteRecipe(this.id));
     this.router.navigate(['/recipes']);
   }
 
   onAddToShoppingList() {
-    this.store.dispatch(new AddIngredients(this.recipe.ingredients));
+    this.store.select('recipes').pipe(
+      take(1)
+    ).subscribe((recipeState: State) => {
+      this.store.dispatch(new AddIngredients(recipeState.recipes[this.id].ingredients));
+    });
   }
 
   onEditRecipe() {
